@@ -30,6 +30,5 @@
 # Checking your short URL redirect
 
     curl -I localhost:3000/abc
-# Technical-Assesment-
-# Technical-Assesment-
-# Technical-Assesment-
+   
+# Technical-Assesment

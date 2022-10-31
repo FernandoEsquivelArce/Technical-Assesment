@@ -8,10 +8,9 @@ class ShortUrlsController < ApplicationController
   end
 
   def create
-    
     @url = ShortUrl.new(full_url:params[:full_url])
-    print(@url.valid?)
     if @url.save 
+      @url.short_code
       render json: @url,status:200
     else
       render json: {error:@url.errors}

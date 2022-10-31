@@ -10,7 +10,8 @@ class ShortUrl < ApplicationRecord
     end
   end
 
-
+  #find by short_code
+  #converte to Base10 the received code
   def self.find_by_short_code(code)
     self.find(to_base_10(code))
   end

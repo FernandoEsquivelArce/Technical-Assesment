@@ -10,6 +10,11 @@ class ShortUrl < ApplicationRecord
     end
   end
 
+
+  def self.find_by_short_code(code)
+    self.find(to_base_10(code))
+  end
+
   def update_title!
   end
 
@@ -25,22 +30,29 @@ class ShortUrl < ApplicationRecord
     result 
   end
 
-  def to_base_10(number)
+  def self.to_base_10(number)
     result=0
     digit=0
     number.split("").reverse.each do |char|
-      index = BASE_62_VALUES.index(char)
+      index = CHARACTERS.index(char)
       result += index * (62**digit)
       digit+=1
     end
     result
   end
 
+  
+
+
   private
   
   #We parse the url and then use de URI library to validate
-  #if it has HTTP or HTTPS format
+  #if it is valid and has HTTP or HTTPS format 
   def validate_full_url
+    if full_url == nil
+      errors.add(:full_url,"can't be blank")
+      return
+    end 
     uri = URI.parse(full_url)
     uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
   rescue URI::InvalidURIError

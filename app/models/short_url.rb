@@ -1,8 +1,6 @@
 class ShortUrl < ApplicationRecord
-  require 'uri'
   CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
   validate :validate_full_url
-
 
   def short_code
     if full_url != nil
@@ -54,15 +52,15 @@ class ShortUrl < ApplicationRecord
   #We parse the url and then use de URI library to validate
   #if it is valid and has HTTP or HTTPS format 
   def validate_full_url
-    if full_url == nil
-      errors.add(:full_url,"can't be blank")
-      errors.add(:full_url,"Full url is not a valid url")
+    if full_url == nil || full_url.strip==""
+      errors.add(:full_url,:blank)
       return
     end 
     uri = URI.parse(full_url)
-    uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+    if !uri.is_a?(URI::HTTP) || !uri.is_a?(URI::HTTPS)
+      errors.add(:full_url,"is not a valid url")
+    end
   rescue URI::InvalidURIError
-    errors.add(:full_url,'is not a valid url')
-    errors.add(:full_url,"Full url is not a valid url")
+    errors.add(:full_url,"is not a valid url")
   end
 end

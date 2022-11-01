@@ -4,16 +4,23 @@ class ShortUrlsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @urls=ShortUrl.all 
+    @urls= [] 
+    ShortUrl.select(:full_url).order(click_count: :desc).limit(100).each do |url|
+      @urls.append(url["full_url"])
+    end
+    if @urls != nil
+      render json: {urls:@urls , status:200}
+    end
   end
 
   def create
     @url = ShortUrl.new(full_url:params[:full_url])
     if @url.save 
-      @url.short_code
-      render json: @url,status:200
+      print(@url.errors)
+      render json: {short_code:@url.short_code,status:200}
     else
-      render json: {error:@url.errors}
+      print(@url.errors)
+      render json: errors:@url.errors
     end
   end
 

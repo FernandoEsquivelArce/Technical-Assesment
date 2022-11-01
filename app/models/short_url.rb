@@ -10,6 +10,10 @@ class ShortUrl < ApplicationRecord
     end
   end
 
+  def public_attributes
+    self.full_url
+  end 
+
   #find by short_code
   #converte to Base10 the received code
   def self.find_by_short_code(code)
@@ -52,11 +56,13 @@ class ShortUrl < ApplicationRecord
   def validate_full_url
     if full_url == nil
       errors.add(:full_url,"can't be blank")
+      errors.add(:full_url,"Full url is not a valid url")
       return
     end 
     uri = URI.parse(full_url)
     uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
   rescue URI::InvalidURIError
     errors.add(:full_url,'is not a valid url')
+    errors.add(:full_url,"Full url is not a valid url")
   end
 end

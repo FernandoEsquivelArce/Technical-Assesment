@@ -26,8 +26,10 @@ class ShortUrlsController < ApplicationController
 
   def show
     @url=ShortUrl.find_by(id:ShortUrl.to_base_10(params['id']))
-    redirect_to(@url["full_url"]) unless @url.nil?
-    if @url.nil?
+    if !@url.nil?
+      redirect_to(@url["full_url"])
+      @url.update(click_count:@url["click_count"]+1)
+    else
       render json: {}, status:404
     end
   end

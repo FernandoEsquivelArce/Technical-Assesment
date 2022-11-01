@@ -18,6 +18,7 @@ class ShortUrlsController < ApplicationController
   def create
     @url = ShortUrl.new(full_url:params[:full_url])
     if @url.save 
+      UpdateTitleJob.perform_later(@url["id"])
       render json: {short_code:@url.short_code}, status:200
     else
       render json: {errors:@url.errors.full_messages}

@@ -18,9 +18,16 @@ class ShortUrl < ApplicationRecord
     self.find(to_base_10(code))
   end
 
+  #get the title from given url, by match the obtained html with the regualr expresion of title tag
   def update_title!
+    uri = URI(self.full_url)
+    html= Net::HTTP.get(uri)
+    regexp = /<title>(.*)<\/title>/
+    regexp.match(html)
+    self.update(title:$1.to_s)
   end
 
+  #
   def to_base_62(number)
     return "0" if number == 0
     result = ""
@@ -33,19 +40,17 @@ class ShortUrl < ApplicationRecord
     result 
   end
 
+  #do the reverse process of de base_62 codification
   def self.to_base_10(code)
     result=0
     digit=0
-    code.split("").reverse.each do |char|
+    code.split("").reverse.each do |char| 
       index = CHARACTERS.index(char)
       result += index * (62**digit)
       digit+=1
     end
     result
   end
-
-  
-
 
   private
   

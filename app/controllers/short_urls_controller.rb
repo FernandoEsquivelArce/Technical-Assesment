@@ -8,23 +8,28 @@ class ShortUrlsController < ApplicationController
   def index
     @urls= [] 
     ShortUrl.select(:full_url).order(click_count: :desc).limit(100).each do |url|
-      @urls.append(url["full_url"])
+      @urls.append(url["full_url"]) unless url.nil?
     end
-    if @urls != nil
-      render json: {urls:@urls , status:200}
+    if !@urls.nil?
+      render json: {urls:@urls}, status:200
     end
   end
 
   def create
     @url = ShortUrl.new(full_url:params[:full_url])
     if @url.save 
-      render json: {short_code:@url.short_code,status:200}
+      render json: {short_code:@url.short_code}, status:200
     else
       render json: {errors:@url.errors.full_messages}
     end
   end
 
   def show
+    @url=ShortUrl.find_by(id:ShortUrl.to_base_10(params['id']))
+    redirect_to(@url["full_url"]) unless @url.nil?
+    if @url.nil?
+      render json: {}, status:404
+    end
   end
 
 end

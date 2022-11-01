@@ -33,10 +33,10 @@ class ShortUrl < ApplicationRecord
     result 
   end
 
-  def self.to_base_10(number)
+  def self.to_base_10(code)
     result=0
     digit=0
-    number.split("").reverse.each do |char|
+    code.split("").reverse.each do |char|
       index = CHARACTERS.index(char)
       result += index * (62**digit)
       digit+=1
